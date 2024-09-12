@@ -1,0 +1,797 @@
+#install.packages("readxl")
+library(readxl)
+#install.packages("tidyverse")
+library(haven)
+
+setwd("C:/Users/.../May_2024_paper_revision")
+
+dat <- read_excel("add 3 new vars 180524.xlsx", sheet="Sheet1")
+n<-1610
+
+# gender
+unique(dat$q6_gender_numerical)
+gender<-rep(NA,n)
+for(i in 1:n){
+  if(dat$q6_gender_numerical[i] == "Female"){
+    gender[i]<-0
+  }else if(dat$q6_gender_numerical[i] == "Male" ){
+    gender[i]<-1
+  }
+}
+
+dat<- dat[gender==0,]
+n <- 1369
+
+#------------------------------clustering variables---------------------------------------
+
+#--------------------------------------------------------------------
+# pregnancy
+unique(dat$q72_curr_pregnant1) # contains some NA
+pregnancy<-rep(NA,n)
+pregnancy <- dat$q72_curr_pregnant1
+
+# parity  
+unique(dat$q74_livebirths1)
+parity<-rep(NA,n)
+parity <- dat$q74_livebirths1
+
+# hospital level 
+unique(dat$hospital_level_binary)
+hospital_level<-rep(NA,n)
+for(i in 1:n){
+  if(dat$hospital_level_binary[i]=="Higher level: 4/6"){
+    hospital_level[i]<-1
+  }else if(dat$hospital_level_binary[i]=="Lower level: 2/3"){
+    hospital_level[i]<-0
+  }
+}
+
+#Age has three categories
+unique(dat$age_categorical_recoded)
+sum(is.na(dat$age_categorical_recoded))
+age<-rep(NA, n)
+for(i in 1:n){
+  if(is.na(dat$age_categorical_recoded[i])){
+    age[i]<-NA
+    
+  }else if(dat$age_categorical_recoded[i] == "<25" ){
+    age[i]<-0
+  }else if (dat$age_categorical_recoded[i] == "25-34" ){
+    age[i]<-1
+  }
+  else if (dat$age_categorical_recoded[i] == "35-44" ){
+    age[i]<-1
+  }
+  else if (dat$age_categorical_recoded[i] == "45-54" ){
+    age[i]<-2
+  }
+  else if (dat$age_categorical_recoded[i] == "55-64" ){
+    age[i]<-2
+  }
+  else if (dat$age_categorical_recoded[i] == "65+" ){
+    age[i]<-2
+  }
+}
+# gender
+unique(dat$q6_gender_numerical)
+gender<-rep(NA,n)
+for(i in 1:n){
+  if(dat$q6_gender_numerical[i] == "Female"){
+    gender[i]<-0
+  }else if(dat$q6_gender_numerical[i] == "Male" ){
+    gender[i]<-1
+  }
+}
+#marital status= binary - partnered vs not 
+unique(dat$q8_maritalstatus_numerical)
+sum(is.na(dat$q8_maritalstatus_numerical))
+marital_status<-rep(NA,n)
+for(i in 1:n){
+  if(is.na(dat$q8_maritalstatus_numerical[i])){
+    marital_status[i]<-NA
+    
+  }else if(dat$q8_maritalstatus_numerical[i] == "never-married" ){
+    marital_status[i]<-0
+  }else if (dat$q8_maritalstatus_numerical[i] == "Divorced/separated" ){
+    marital_status[i]<-0
+  }
+  else if (dat$q8_maritalstatus_numerical[i] == "widowed" ){
+    marital_status[i]<-0
+  }
+  else if (dat$q8_maritalstatus_numerical[i] == "Married" ){
+    marital_status[i]<-1
+  }
+  else if (dat$q8_maritalstatus_numerical[i] == "co-habiting" ){
+    marital_status[i]<-1
+  }
+  
+}
+
+# education (patient) is secondary/higher vs less 
+unique(dat$educ_bin)
+education<-dat$educ_bin
+
+#working status of patient: working vs not 
+unique(dat$working)
+work_status<-dat$working
+
+# urban location 
+unique(dat$urban)
+urban<-dat$urban
+sum(is.na(urban))
+
+#-------------------------------------------------------------
+# education of hh head : secondary/higher vs lower 
+unique(dat$educ_hh_head)
+sum(is.na(dat$educ_hh_head))
+educ_hh<-rep(NA,n)
+for(i in 1:n){
+  if(is.na(dat$educ_hh_head[i])){
+    educ_hh[i]<-NA
+    
+  }else if(dat$educ_hh_head[i] == "None" ){
+    educ_hh[i]<-0
+  }else if (dat$educ_hh_head[i] == "Primary" ){
+    educ_hh[i]<-0
+  }
+  else if (dat$educ_hh_head[i] == "Secondary/high school" ){
+    educ_hh[i]<-1
+  }else if (dat$educ_hh_head[i] == "Any further education/higher education" ){
+    educ_hh[i]<-1
+  }
+  
+}
+#dummy variables for assets 
+
+asset_electric<-dat$asset_electric
+sum(is.na(asset_electric))
+
+asset_motor<-dat$asset_motor
+
+asset_tv<-dat$asset_tv
+
+asset_pc<-dat$asset_pc
+
+asset_fridge<-dat$asset_fridge
+
+asset_phonesmart<-dat$asset_phonesmart
+
+#whether household owns land vs not 
+own_land<-dat$own_land_bin
+unique(own_land)
+sum(is.na(own_land))
+
+#whether household owns this house vs not 
+unique(dat$hhq18_own_house)
+own_house<-rep(NA,n)
+for(i in 1:n){
+  if(is.na(dat$hhq18_own_house[i])){
+    own_house[i]<-NA
+    
+  }else if(dat$hhq18_own_house[i] == "No" ){
+    own_house[i]<-0
+  }else if (dat$hhq18_own_house[i] == "Yes" ){
+    own_house[i]<-1
+  }
+  
+}
+unique(own_house)
+# whether has deprived walls. Deprived= not made of brick or cement 
+unique(dat$deprived_walls)
+deprived_walls<-rep(NA,n)
+for(i in 1:n){
+  if(dat$deprived_walls[i] == "No" ){
+    deprived_walls[i]<-0
+  }else if (dat$deprived_walls[i] == "Yes" ){
+    deprived_walls[i]<-1
+  }
+}
+unique(deprived_walls)
+
+# drinking water source 
+unique(dat$q89_drinkingwater1)
+drinking_water<-rep(NA,n)
+for(i in 1:n){
+  if(is.na(dat$q89_drinkingwater1[i])){
+    drinking_water[i]<-NA
+  }else if(dat$q89_drinkingwater1[i] == "Protected private" ){
+    drinking_water[i]<-0
+  }else if (dat$q89_drinkingwater1[i] == "Protected public" ){
+    drinking_water[i]<-1
+  }else if (dat$q89_drinkingwater1[i] == "Unprotected private" ){
+    drinking_water[i]<-2
+  }else if (dat$q89_drinkingwater1[i] == "Unprotected public" ){
+    drinking_water[i]<-3
+  }
+}
+sum(is.na(drinking_water))
+
+# type of toilet 
+unique(dat$q91_toilet1)
+sum(is.na(dat$q91_toilet1))
+toilet<-rep(NA,n)
+for(i in 1:n){
+  if(is.na(dat$q91_toilet1[i])){
+    toilet[i]<-NA
+  }else if(dat$q91_toilet1[i] == "Private flush" ){
+    toilet[i]<-0
+  }else if (dat$q91_toilet1[i] == "Pit latrine"  ){
+    toilet[i]<-1
+  }else if (dat$q91_toilet1[i] == "Public flush"  ){
+    toilet[i]<-2
+  }else if (dat$q91_toilet1[i] == "No facility"  ){
+    toilet[i]<-3
+  }
+}
+sum(is.na(toilet))
+
+# washing water source 
+unique(dat$q90_washingwater1)
+washing_water<-rep(NA,n)
+for(i in 1:n){
+  if(is.na(dat$q90_washingwater1[i])){
+    washing_water[i]<-NA
+  }else if(dat$q90_washingwater1[i] == "Protected private" ){
+    washing_water[i]<-0
+  }else if (dat$q90_washingwater1[i] == "Protected public" ){
+    washing_water[i]<-1
+  }else if (dat$q90_washingwater1[i] == "Unprotected public" ){
+    washing_water[i]<-2
+  }else if (dat$q90_washingwater1[i] == "Unprotected private"  ){
+    washing_water[i]<-3
+  }
+}
+sum(is.na(washing_water))
+
+# more than 3 ppl per room in the house = overcrowded 
+unique(dat$overcrowded)
+overcrowded<-rep(NA,n)
+for(i in 1:n){
+  if(is.na(dat$overcrowded[i])){
+    overcrowded[i]<-NA
+    
+  }else if(dat$overcrowded[i] == "Yes" ){
+    overcrowded[i]<-1
+  }else if (dat$overcrowded[i] == "No" ){
+    overcrowded[i]<-0
+  }
+}
+
+# whether patient or household has any kind of health insurance 
+unique(dat$insurancecons)
+insurancecons<-dat$insurancecons
+
+# whether sold, borrowed or used savings  to meet healthcare costs
+unique(dat$meet_health)
+meet_health<-dat$meet_health
+
+#whether household members gone without food 
+unique(dat$hhq16_without_food)
+without_food<-rep(NA,n)
+for(i in 1:n){
+  if(is.na(dat$hhq16_without_food[i])){
+    without_food[i]<-NA
+    
+  }else if(dat$hhq16_without_food[i] == "Yes" ){
+    without_food[i]<-1
+  }else if (dat$hhq16_without_food[i] == "No" ){
+    without_food[i]<-0
+  }
+}
+unique(without_food)
+sum(is.na(without_food))
+
+# eats meat at least once per week 
+unique(dat$eat_meat_bin)
+eat_meat<-dat$eat_meat_bin
+sum(is.na(eat_meat))
+
+#frequently consume milk 
+unique(dat$consume_milk_bin)
+consume_milk<-dat$consume_milk_bin
+sum(is.na(consume_milk))
+
+#----------------------------------------------------------------
+#uses soap when handwashing 
+unique(dat$soap)
+soap<-dat$soap
+sum(is.na(soap))
+
+# combined raw sewage in compound 
+unique(dat$sewage1) # MP corrected from dat$sewage
+sewage<-dat$sewage1
+
+# use of manure in the compound 
+unique(dat$manure)
+manure<-dat$manure
+
+# rubbish gets dumped in the compound  
+unique(dat$hhq101_rubbish_dumping)
+rubbish_dumping<-dat$hhq101_rubbish_dumping
+
+# has any livestock in the compound 
+unique(dat$hhq64_livestock_bin)
+have_livestock<-dat$hhq64_livestock_bin
+
+# use ABs in raising livestock 
+unique(dat$livestock_abs)
+livestock_abs<-dat$livestock_abs
+sum(is.na(livestock_abs))
+
+#----------------------------------------------------------
+# UTI related stuff 
+#whether they had a delay of 2 or more weeks before seeking treatment 
+delay_2weeks<-rep(NA, n)
+for(i in 1:n){
+  if(is.na(dat$delay_2weeks[i])){
+    delay_2weeks[i]<-NA
+    
+  }else if(dat$delay_2weeks[i] == "delay" ){
+    delay_2weeks[i]<-1
+  }else if (dat$delay_2weeks[i] == "No delay" ){
+    delay_2weeks[i]<-0
+  }
+}
+sum(is.na(delay_2weeks))
+
+#change uti_path_step to binary
+convertBinary<-function(name, vectorOrig,n){
+  vector<-rep(NA,n)
+  for(i in 1:n){
+    if(is.na(vectorOrig[i])){
+      
+    }else if(vectorOrig[i]==name){
+      vector[i]<-1
+    }else{
+      vector[i]<-0
+    }
+  }
+  return(vector)
+}
+
+dat$uti_path_stepsnew
+unique(dat$uti_path_stepsnew)
+pathway_step<-rep(NA, n)
+for(i in 1:n){
+  if(is.na(dat$uti_path_stepsnew[i])){
+    
+  }else if(dat$uti_path_stepsnew[i]=="Straight to clinic"){
+    pathway_step[i]<-0
+  }else if(dat$uti_path_stepsnew[i]=="1 thing"){
+    pathway_step[i]<-1
+  }else if(dat$uti_path_stepsnew[i]=="2 things"){
+    pathway_step[i]<-2
+  }else if(dat$uti_path_stepsnew[i]=="3+things"){
+    pathway_step[i]<-3
+  }
+}
+sum(is.na(pathway_step))
+
+# has this set of code worked alright? 
+pathway_step[111:120]
+dat$uti_path_stepsnew[111:120]
+unique(pathway_step)
+
+# attended gov clinic 
+unique(dat$govclinic)
+govclinic<-as.numeric(dat$govclinic)
+sum(is.na(govclinic))
+
+
+#attended private clinic 
+unique(dat$privclinic)
+privclinic<-as.numeric(dat$privclinic)
+sum(is.na(privclinic))
+
+
+#attended drug shop 
+unique(dat$drugshop)
+drugshop<-as.numeric(dat$drugshop)
+sum(is.na(drugshop))
+
+
+# self treated 
+unique(dat$selftreat)
+selftreat<-as.numeric(dat$selftreat)
+sum(is.na(selftreat))
+
+
+# took abs in pathway 
+unique(dat$took_abs)
+took_abs<-as.numeric(dat$took_abs)
+sum(is.na(took_abs))
+
+
+# took another type of medicine 
+unique(dat$took_othermed)
+took_othermed<-as.numeric(dat$took_othermed)
+sum(is.na(took_othermed))
+
+
+
+#--------------------------------------------------------------
+# whether been to Dr for these UTI symptoms before 
+unique(dat$q44_utisymptoms_doctor)
+doctor_before<-rep(NA,n)
+for(i in 1:n){
+  if(is.na(dat$q44_utisymptoms_doctor[i])){
+    doctor_before[i]<-NA
+    
+  }else if(dat$q44_utisymptoms_doctor[i] == "Yes" ){
+    doctor_before[i]<-1
+  }else if (dat$q44_utisymptoms_doctor[i] == "No" ){
+    doctor_before[i]<-0
+  }
+}
+sum(is.na(doctor_before))
+
+# UTI symptoms stigma 
+unique(dat$q31_uti_stigma_numerical)
+is_stigma<-rep(NA, n)
+for(i in 1:n){
+  if(is.na(dat$q31_uti_stigma_numerical[i])){
+    is_stigma[i]<-NA
+    
+  }else if(dat$q31_uti_stigma_numerical[i] == "Yes" ){
+    is_stigma[i]<-1
+  }else if (dat$q31_uti_stigma_numerical[i] == "No" ){
+    is_stigma[i]<-0
+  }
+}
+sum(is.na(is_stigma))
+
+
+# Other patient health factors 
+# Has HIV 
+unique(dat$q56_hiv_1)
+hiv<-dat$q56_hiv_1
+
+# has NCD 
+unique(dat$ncd)
+ncd<-dat$ncd
+
+# disability 
+unique(dat$disability)
+disability<-rep(NA,n)
+for(i in 1:n){
+  if(dat$disability[i] == "at least 1 disability" ){
+    disability[i]<-1
+  }else if (dat$disability[i] == "None" ){
+    disability[i]<-0
+  }
+}
+
+
+# whether been in hospital over past 6 months 
+unique(dat$hospital)
+in_hospital<-rep(NA,n)
+for(i in 1:n){
+  if(is.na(dat$hospital[i])){
+    in_hospital[i]<-NA
+    
+  }else if(dat$hospital[i] == "Outpatient" ){
+    in_hospital[i]<-1
+  }else if (dat$hospital[i] == "No" ){
+    in_hospital[i]<-0
+  }
+}
+
+in_hospital[9:19]
+dat$hospital[9:19]
+sum(is.na(in_hospital))
+
+
+# how easily meet health care costs 
+unique(dat$q63_health_cost)
+health_cost<-rep(NA, n)
+for(i in 1:n){
+  if(is.na(dat$q63_health_cost[i])){
+    health_cost[i]<-NA
+    
+  }else if(dat$q63_health_cost[i] == "Easy" ){
+    health_cost[i]<-0
+  }else if (dat$q63_health_cost[i] == "little difficult" ){
+    health_cost[i]<-1
+  }
+  else if (dat$q63_health_cost[i] == "Very difficult"){
+    health_cost[i]<-1
+  }else if (dat$q63_health_cost[i] == "don't know"){
+    health_cost[i]<-NA
+  }
+}
+sum(is.na(health_cost))
+
+
+# not complete course 
+unique(dat$q78_rev_bin)
+no_compl_ab<-rep(NA,n)
+for(i in 1:n){
+  if(is.na(dat$q78_rev_bin[i])){
+    no_compl_ab[i]<-NA
+    
+  }else if(dat$q78_rev_bin[i] == "yes" ){
+    no_compl_ab[i]<-1
+  }else if (dat$q78_rev_bin[i] == "No" ){
+    no_compl_ab[i]<-0
+  }
+}
+sum(is.na(no_compl_ab))
+
+# skip doses
+unique(dat$q79_bin)
+skip_ab<-rep(NA,n)
+for(i in 1:n){
+  if(is.na(dat$q79_bin[i])){
+    skip_ab[i]<-NA
+    
+  }else if(dat$q79_bin[i] == "yes" ){
+    skip_ab[i]<-1
+  }else if (dat$q79_bin[i] == "No" ){
+    skip_ab[i]<-0
+  }
+}
+sum(is.na(skip_ab))
+
+# whether there is someone currently ill in the hh 
+unique(dat$hh_sick_bin)
+hh_sick<-dat$hh_sick_bin
+
+# infant death in past 5 years 
+unique(dat$infantdeath)
+infantdeath<-dat$infantdeath
+
+#################### health attitudes and behaviours ################################
+
+# consults others when ill vs only consults doctors 
+unique(dat$q82_doctoronly)
+doctor_only<-dat$q82_doctoronly
+
+# obstacles to gettign healthcare 
+
+
+unique(dat$obstacle_meds_not_avail)
+obstacle_no_meds<-dat$obstacle_meds_not_avail
+sum(is.na(obstacle_no_meds))
+
+
+unique(dat$obstacle_lacktime)
+obstacle_lacktime<-dat$obstacle_lacktime
+
+unique(dat$obstacle_lackmoney)
+obstacle_lackmoney<-dat$obstacle_lackmoney
+
+unique(dat$obstacle_accessinghcc)
+obstacle_accessinghcc<-dat$obstacle_accessinghcc
+
+# taken ABs in last 6 months 
+unique(dat$q76_taken_ab_6m_binary)
+taken_ab_6m<-dat$q76_taken_ab_6m_binary
+
+# Knows 4 or more types of ABs 
+unique(dat$know_ab_cat)
+
+
+  know_ab_4plus<-rep(NA, n)
+  for(i in 1:n){
+    if(is.na(dat$know_ab_cat[i])){
+      know_ab_4plus[i]<-NA
+      
+    }else if(dat$know_ab_cat[i] == "know 0-3 abs" ){
+      know_ab_4plus[i]<-0
+    }else if (dat$know_ab_cat[i] == "know 4 or more abs" ){
+      know_ab_4plus[i]<-1
+    }
+  }
+  unique(know_ab_4plus)
+  sum(is.na(know_ab_4plus))
+  
+
+# knows the term AB 
+  
+unique(dat$q75_antibiotic_knowledge)
+antibiotic_knowledge<-rep(NA, n)
+for(i in 1:n){
+  if(is.na(dat$q75_antibiotic_knowledge[i])){
+    antibiotic_knowledge[i]<-NA
+    
+  }else if(dat$q75_antibiotic_knowledge[i] == "don't know" ){
+    antibiotic_knowledge[i]<-0
+  }else if (dat$q75_antibiotic_knowledge[i] == "medicine for infection/germs" ){
+    antibiotic_knowledge[i]<-1
+  }
+  else if (dat$q75_antibiotic_knowledge[i] == "another name for medicine"){
+    antibiotic_knowledge[i]<-1
+  }
+}
+sum(is.na(antibiotic_knowledge))
+
+# shares abs with hh members or neighbours 
+unique(dat$share_abs)
+share_abs<-dat$share_abs
+
+# keeps or uses leftover abs 
+unique(dat$keepgive_leftovers)
+keep_leftovers<-dat$keepgive_leftovers
+sum(is.na(keep_leftovers))
+
+
+# heard of / aware AMR or drug resistance 
+unique(dat$heardamr_bin)
+heardamr<-dat$heardamr_bin
+sum(is.na(heardamr))
+
+
+# experience of amr 
+unique(dat$exp_amr)
+expamr<-dat$exp_amr
+sum(is.na(expamr))
+
+
+# travelled internationally 
+unique(dat$travel_intern)
+travel_intern<-dat$travel_intern
+
+# works in a hospital 
+unique(dat$works_inhospital)
+works_inhospital<-dat$works_inhospital
+sum(is.na(works_inhospital))
+
+#recently visited hospitla 
+unique(dat$visit_hospital)
+visit_hospital<-dat$visit_hospital
+sum(is.na(visit_hospital))
+
+
+#--------------------------------Other variables--------------------------------
+# mdr variable 
+non_ecdc_mdr<-as.numeric(dat$non_ecdc_mdr)
+
+# NEW MDR re-classifies 'intermediate' resistance as 0 rather than 1
+new_inter_as_0_mdr<-as.numeric(dat$new_mdr_all_r_nonecdc)
+
+# site 
+unique(dat$site2)
+site<-rep(NA,n)
+for(i in 1:n){
+  if(dat$site2[i]=="Nairobi"){
+    site[i]<-0
+  }else if(dat$site2[i]=="Nanyuki"){
+    site[i]<-1
+  }else if(dat$site2[i]=="Makueni"){
+    site[i]<-2
+  }else if(dat$site2[i]=="Mwanza"){
+    site[i]<-3
+  }else if(dat$site2[i]=="Mbeya"){
+    site[i]<-4
+  }else if(dat$site2[i]=="Kilimanjaro"){
+    site[i]<-5
+  }else if(dat$site2[i]=="Mbarara"){
+    site[i]<-6
+  }else if(dat$site2[i]=="Nakasongola"){
+    site[i]<-7
+  }else if(dat$site2[i]=="Nakapiripirit"){
+    site[i]<-8
+  }
+}
+
+table(site)
+table(dat$site2)
+
+# country 
+# site 
+unique(dat$country)
+country<-rep(NA,n)
+for(i in 1:n){
+  if(dat$country[i]=="Kenya"){
+    country[i]<-0
+  }else if(dat$country[i]=="Tanzania"){
+    country[i]<-1
+  }else if(dat$country[i]=="Uganda"){
+    country[i]<-2
+  }
+}
+
+
+table(country)
+table(dat$country)
+#########################################################################################
+#-----------------------------------------------------------------------------------------
+# This is now the suggested list. 
+#-------------------------------Model-----------------------------------------------------
+group1<-cbind(hospital_level, age, gender, marital_status, education, work_status, urban)
+group2<-cbind(educ_hh, asset_electric, asset_motor, asset_tv, asset_pc, asset_fridge,
+              asset_phonesmart, own_land, own_house, deprived_walls, drinking_water,
+              toilet, washing_water, overcrowded, insurancecons, meet_health,
+              without_food, eat_meat, consume_milk)
+group3<-cbind(soap, sewage, rubbish_dumping, 
+              manure, have_livestock,
+              livestock_abs )
+group4<-cbind(delay_2weeks, pathway_step, govclinic,
+              privclinic, drugshop, selftreat, took_abs, took_othermed )
+group5<-cbind(doctor_before, hiv, ncd, disability, 
+              in_hospital, health_cost, antibiotic_knowledge,
+              no_compl_ab, skip_ab, doctor_only, taken_ab_6m, know_ab_4plus,  
+              hh_sick,  obstacle_no_meds, obstacle_lacktime, 
+              obstacle_lackmoney, obstacle_accessinghcc, infantdeath)
+group6<-cbind(is_stigma, travel_intern, 
+              share_abs, keep_leftovers, heardamr, expamr,
+              works_inhospital, visit_hospital)
+group7<-cbind(pregnancy,parity)
+
+dat_use<-cbind(non_ecdc_mdr, group1, group2, group3, group4, group5, group6, group7, site)
+#dat_use<-cbind(non_ecdc_mdr, group1, group2, group3, group4, group5, group6)
+dim(dat_use)
+dat_use<-as.data.frame(dat_use)
+#unique(dat_use$age)
+#dat_use<-dat_use[,-1*exclude]
+
+name1<-c("hospital_level", "age", "gender", "marital_status", "education", "work_status", 
+         "urban")
+name2<-c("educ_hh","asset_electric", "asset_motor", "asset_tv", "asset_pc", "asset_fridge",
+         "asset_phonesmart", "own_land", "own_house", "deprived_walls", "drinking_water",
+         "toilet", "washing_water", "overcrowded", "insurancecons", "meet_health", 
+         "without_food", "eat_meat", "consume_milk" )
+name3<-c("soap", "sewage", "rubbish_dumping",
+         "manure",  "have_livestock",
+         "livestock_abs")
+name4<-c("delay_2weeks", "pathway_step", "govclinic",
+         "privclinic", "drugshop", "selftreat", "took_abs", "took_othermed")
+name5<-c("doctor_before", "hiv", "ncd", "disability", 
+         "in_hospital", "health_cost", "antibiotic_knowledge",
+         "no_compl_ab", "skip_ab", "doctor_only", "taken_ab_6m", "know_ab_4plus",  # MP corrected
+         "hh_sick",  "obstacle_no_meds", "obstacle_lacktime", 
+         "obstacle_lackmoney", "obstacle_accessinghcc", "infantdeath")
+name6<-c("is_stigma", "travel_intern", 
+         "share_abs", "keep_leftovers", "heardamr",  "expamr",
+         "works_inhospital", "visit_hospital")
+name7<-c("pregnancy", "parity")
+
+dat_name<-c(name1, name2, name3, name4, name5, name6,name7,"site")
+#dat_name<-c(name1, name2, name3, name4, name5, name6)
+which(dat_name=="drugshop")
+which(dat_name=="heardamr")
+
+length(dat_name)
+
+#################################################################################################
+#-----------------------------------------------------------------------------------------
+#################################################################################################
+library(PReMiuM)
+
+runInfoObj<-profRegr(outcome=c("non_ecdc_mdr"),yModel="Bernoulli", xModel="Discrete", nSweeps=5000, 
+                     nClusInit=30, seed=54321, varSelectType ="BinaryCluster",
+                     nBurn=800000, data=dat_use, output=paste("output",sep=""), nProgress=100, 
+                     covNames = dat_name)
+
+#post-processing
+dissimObj<-calcDissimilarityMatrix(runInfoObj)
+clusObj<-calcOptimalClustering(dissimObj)
+clusObj$nClusters
+clusObj$clusterSizes
+clusObj$clustering
+riskProfileObj<-calcAvgRiskAndProfile(clusObj, includeFixedEffects=F)
+rho<-summariseVarSelectRho(runInfoObj)
+whichcovariates<-which(rho$rhoMedian>0.69)
+whichcovariates
+whichcovariates <- c(1,7) # hospital level and urban
+
+dat_name[whichcovariates]
+order_risk_ind <- order(riskProfileObj$empiricals) # cluster labels when ordering the clusters in terms of empirical risk
+whichclusters <- which(riskProfileObj$empiricals[order_risk_ind] < 0.31) # cluster labels for ordered clusters
+whichclusters <- which((riskProfileObj$empiricals[order_risk_ind] > 0.6000001) & (riskProfileObj$empiricals[order_risk_ind] < 0.7)) # cluster labels for ordered clusters
+whichclusters <- which((riskProfileObj$empiricals[order_risk_ind] > 0.55) & (riskProfileObj$empiricals[order_risk_ind] < 0.6)) # cluster labels for ordered clusters
+whichclusters <- which(riskProfileObj$empiricals[order_risk_ind] > 0.57)  # cluster labels for ordered clusters
+whichclusters <- 1:clusObj$nClusters
+whichclusters 
+# need at most 4 covariates for plots to make sense
+clusterOrderObj<-plotRiskProfile(riskProfileObj, "clustering_54321_site_women_pregnancy_parity.png", showRelativeRisk=F,orderBy="Empirical",
+                whichCovariates=whichcovariates, whichClusters=whichclusters, useProfileStar=T)
+
+#write a file to store the cluster allocation
+write.table(clusObj$clustering, "clustering_54321_with_site_women.txt", append = FALSE, sep = " ", dec = ".",
+            row.names = FALSE, col.names = FALSE)
+length(which(clusObj$clustering == 2))
+tail(clusObj$clustering)
+
+
+
