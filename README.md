@@ -1,5 +1,5 @@
 # hatuaprofilepaper
-This is a code repository and results for a research paper based on HATUA Consortium data using Bayesian profile regression. The paper is available as a preprint, 
+This is a code and results repository for a research paper based on HATUA Consortium data using Bayesian profile regression. The paper is available as a preprint, 
 
 Keenan, Katherine and Papathomas, Michail and Mshana, Stephen E. and Asiimwe, Benon and Kiiru, John and Lynch, Andy G. and Kesby, Mike and Neema, Stella and Mwanga, Joseph R. and Mushi, Martha F. and Green, Dominique L. and Jing, Wei and Olamijuwon, Emmanuel and Zhang, Qing and Sippy, Rachel and Fredricks, Kathryn J. and Gillespie, Stephen Henry and Sabiti, Wilber and Bazira, Joel and Sloan, Derek J. and Mmbaga, Blandina T. and Kibiki, Gibson and Stelling, John and Smith, V. Anne and Sandeman, Alison and Holden, Matthew T. G. and Consortium, HATUA, Evidencing the Intersection of Environmental, Socioeconomic, Behavioural and Demographic Drivers of Antibacterial Resistance in East Africa. Available at SSRN: https://ssrn.com/abstract=4724376 or http://dx.doi.org/10.2139/ssrn.4724376
 
