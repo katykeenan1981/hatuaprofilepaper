@@ -5,7 +5,8 @@ Keenan, Katherine and Papathomas, Michail and Mshana, Stephen E. and Asiimwe, Be
 
 and as an updated, peer reviewed published version using this doi: 
 
-(add doi) 
+Keenan, K., Papathomas, M., Mshana, S.E. et al. Intersecting social and environmental determinants of multidrug-resistant urinary tract infections in East Africa beyond antibiotic use. Nat Commun 15, 9418 (2024). https://doi.org/10.1038/s41467-024-53253-x
+
 
 The data that support the findings of this study is available according to data sharing policy of the partners in the three participating countries, which restricts access due to ethical issues. The data forms part of a larger linked dataset, with ongoing analysis. To request access, please contact the Principal Investigator of the HATUA Consortium Professor Matthew Holden (mtgh@st-andrews.ac.uk) or the corresponding author (katherine.keenan@st-andrews.ac.uk). At the time of publication, further reuse of the data for analysis would require collaboration in the ongoing work of the HATUA Consortium. 
 
