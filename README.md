@@ -1,4 +1,4 @@
-#Intersecting social and environmental determinants of multidrug-resistant urinary tract infections in East Africa beyond antibiotic use
+# Intersecting social and environmental determinants of multidrug-resistant urinary tract infections in East Africa beyond antibiotic use
 
 This is a code and results repository for a research paper based on HATUA Consortium data using Bayesian profile regression. The paper is available as a preprint, 
 
